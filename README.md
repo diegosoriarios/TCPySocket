@@ -1,41 +1,54 @@
 ### Protocolo
 
 #### Login
-status = int
-message = string
-login = array
+| Name  | Value  |
+| --- | --- |
+| Status | Int |
+| Message | String |
+| Login | Array |
 
 #### Logout
-status = int
-message = string
-token = string
+| Name  | Value  |
+| --- | --- |
+| Status | Int |
+| Message | String |
+| Token | String |
 
 #### Search Name
-status = int
-message = string
-search_name = string
-token = string
+| Name  | Value  |
+| --- | --- |
+| Status | Int |
+| Message | String |
+| SearchName | String |
+| Token | String |
 
 #### Search Name
-status = int
-message = string
-search_content = string
-token = string
+| Name  | Value  |
+| --- | --- |
+| Status | Int |
+| Message | String |
+| SearchContent | String |
+| Token | String |
 
 #### Upload
-status = int
-message = string
-upload = [string]
-token = string
+| Name  | Value  |
+| --- | --- |
+| Status | Int |
+| Message | String |
+| Upload | [String] |
+| Token | String |
 
 #### Upload
-status = int
-message = string
-download = [string]
-token = string
-
+| Name  | Value  |
+| --- | --- |
+| Status | Int |
+| Message | String |
+| Download | [String] |
+| Token | String |
 
 #### Response
-status = int
-message = any
-operation = string
+| Name  | Value  |
+| --- | --- |
+| Status | Int |
+| Message | Any |
+| Operation | String |
