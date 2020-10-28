@@ -2,6 +2,7 @@ import socket
 import json
 import random
 import os
+from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST
 
 HOST = ''
 PORT = 5000
@@ -44,7 +45,7 @@ while True:
             # print(cliente, msg)
             request = json.loads(msg)
             operation = request['message']
-            print(operation)
+            print(cliente, operation)
 
             if operation == LOGIN:
                 token = ""
@@ -54,12 +55,12 @@ while True:
                     if username.lower() in user[0]:
                         if password.lower() in user[1]:
                             token = "token"
-                data = {"success": "true", "status": 202, "message": token}
+                data = {"status": 202, "message": token, "operation": LOGIN+"_reply"}
                 request = json.dumps(data)
                 con.sendall(bytes(request, encoding='utf-8'))
             elif request['token']:
-                if operation == 'list':
-                    data = {"success": "true", "status": 200, "message": db}
+                if operation == LIST:
+                    data = {"status": 200, "message": db, "operation": LIST+"_reply"}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == SEARCH_NAME:
@@ -69,7 +70,7 @@ while True:
                         if search.lower() in name[0].lower():
                             return_value.append(name)
                     
-                    data = {"success": "true", "status": 200, "message": return_value}
+                    data = {"status": 200, "message": return_value, "operation": SEARCH_NAME+"_reply"}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == SEARCH_CONTENT:
@@ -79,13 +80,13 @@ while True:
                         if search.lower() in name[1].lower():
                             return_value.append(name)
                     
-                    data = {"success": "true", "status": 200, "message": return_value}
+                    data = {"status": 200, "message": return_value, "operation": SEARCH_CONTENT+"_reply"}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == UPLOAD:
                     file = request[UPLOAD]
                     db.append(file)
-                    data = {"success": "true", "status": 200, "message": "File Uploaded"}
+                    data = {"status": 200, "message": "File Uploaded", "operation": UPLOAD+"_reply"}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == DOWNLOAD:
@@ -95,15 +96,15 @@ while True:
                     for name in db:
                         if file_name.lower() in name[0].lower():
                             if file_content.lower() in name[1].lower():
-                                data = {"success": "true", "status": 200, "message": name}
+                                data = {"status": 200, "message": name, "operation": DOWNLOAD+"_reply"}
                                 request = json.dumps(data)
                                 con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == LOGOUT:
-                    data = {"success": "true", "status": 202, "message": ""}
+                    data = {"status": 202, "message": "", "operation": LOGOUT+"_reply"}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
             else:
-                data = {"success": "false", "status": 401, "message": "Unauthorized"}
+                data = {"status": 401, "message": "Unauthorized", "operation": "Error_reply"}
                 request = json.dumps(data)
                 con.sendall(bytes(request, encoding='utf-8'))
 
