@@ -2,7 +2,7 @@ import socket
 import json
 import random
 import os
-from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST
+from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST, STATE
 
 HOST = ''
 PORT = 5000
@@ -38,6 +38,7 @@ while True:
     if pid == 0:
         tcp.close()
         print('Concetado por', cliente)
+        state = STATE.CONNECTED
 
         while True:
             msg = con.recv(1024)
@@ -47,18 +48,24 @@ while True:
             operation = request['message']
             print(cliente, operation)
 
-            if operation == LOGIN:
-                token = ""
-                username = request[LOGIN][0]
-                password = request[LOGIN][1]
-                for user in users:
-                    if username.lower() in user[0]:
-                        if password.lower() in user[1]:
-                            token = "token"
-                data = {"status": 202, "message": token, "operation": LOGIN+"_reply"}
-                request = json.dumps(data)
-                con.sendall(bytes(request, encoding='utf-8'))
-            elif request['token']:
+            if state == STATE.CONNECTED:
+                if operation == LOGIN:
+                    token = ""
+                    username = request[LOGIN][0]
+                    password = request[LOGIN][1]
+                    for user in users:
+                        if username.lower() in user[0]:
+                            if password.lower() in user[1]:
+                                token = "token"
+                                state = STATE.AUTHENTICATED
+                    data = {"status": 202, "message": token, "operation": LOGIN+"_reply"}
+                    request = json.dumps(data)
+                    con.sendall(bytes(request, encoding='utf-8'))
+                else:
+                    data = {"status": 401, "message": "Unauthorized", "operation": "Error_reply"}
+                    request = json.dumps(data)
+                    con.sendall(bytes(request, encoding='utf-8'))
+            elif state == STATE.AUTHENTICATED and request['token']:
                 if operation == LIST:
                     data = {"status": 200, "message": db, "operation": LIST+"_reply"}
                     request = json.dumps(data)
@@ -100,7 +107,12 @@ while True:
                                 request = json.dumps(data)
                                 con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == LOGOUT:
+                    state = STATE.CONNECTED
                     data = {"status": 202, "message": "", "operation": LOGOUT+"_reply"}
+                    request = json.dumps(data)
+                    con.sendall(bytes(request, encoding='utf-8'))
+                else:
+                    data = {"status": 401, "message": "Unauthorized", "operation": "Error_reply"}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
             else:
