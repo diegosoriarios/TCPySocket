@@ -9,6 +9,20 @@ def send_message(data, tcp):
     request = json.dumps(data)
     tcp.sendall(bytes(request, encoding='utf-8'))
 
+def print_options():
+    if token:
+        print('-------------------------------')
+        print('| logout             list     |')
+        print('| search_name        upload   |')
+        print('| search_content     download |')
+        print('-------------------------------')
+    else:
+        print('-------------------------------')
+        print('|                             |')
+        print('|            login            |')
+        print('|                             |')
+        print('-------------------------------')
+
 HOST = '127.0.0.1'
 PORT = 5000
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,6 +30,7 @@ error = False
 dest = (HOST, PORT)
 tcp.connect(dest)
 print('Para sair use CTRL+X\n')
+print_options()
 msg = input()
 while msg != '\x18':
     error = False
@@ -65,5 +80,6 @@ while msg != '\x18':
         if status == 202:
             token = request['message']
         print(operation, response)
+    print_options()
     msg = input()
 tcp.close()
