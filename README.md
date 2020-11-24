@@ -161,3 +161,6 @@ Protocolo de middleware de um sistema de votação. Cliente deve poder votar, co
     → STARTVOTE
     → STARTVOTEREPLY:OK
 
+#### Máquina de estados
+
+<img src="D:\\Documentos\\_faculdade\\6 Semestre\\4_SistemasDistribuidos\\VotacaoFIniteMachineREAL.png" width="100%">
