@@ -13,33 +13,38 @@ python3 client.py
 ### Protocolo
 
 #### Descrição Geral: 
-	Protocolo de middleware de um sistema de votação. Cliente deve poder votar, consultar resultado, ver lista de candidatos, enquanto um administrador deve ser capaz de cadastrar candidatos, iniciar votação,obter lista de votação, finalizá-la, apurá-la, votar, e. Não necessariamente nessa ordem. Para realizar os processos respectivos, os clientes, admins ou não, devem estar logados no sistema.
+
+Protocolo de middleware de um sistema de votação. Cliente deve poder votar, consultar resultado, ver lista de candidatos, enquanto um administrador deve ser capaz de cadastrar candidatos, iniciar votação,obter lista de votação, finalizá-la, apurá-la, votar, e. Não necessariamente nessa ordem. Para realizar os processos respectivos, os clientes, admins ou não, devem estar logados no sistema.
 
 #### Lista de mensagens possíveis:
-	LOGIN → Cliente solicita autenticação com o servidor;
-	LOGINREPLY→ Servidor responde LOGIN, alterando estado para Autenticado;
-	ADMINLOGINREPLY→Caso o cliente entre com dados de administrador, o servidor altera seu estado para tal, ao invés de Autenticado;
-	LOGOUT→ Cliente/Admin solicita logout do sistema para o servidor;
-	LOGOUTREPLY → Servidor responde alterando estado para Conectado;
-	ADDCANDIDATO→ admin requisita cadastro de candidato novo;
-	ADDCANDIDATOREPLY→Servidor responde ao pedido de criação de candidato
-	STARTVOTE→ admin requisita o começo da votação
-	STARTVOTEREPLY→ Servidor responde a requisição startvote do admin
-	LISTCANDIDATOS→ Cliente pede ao servidor para ver os candidatos existentes
-	LISTCANDIDATOSREPLY→ Servidor envia a lista de candidatos;
-	ENDVOTE→ Admin requisita o encerramento da votação;
-	ENDVOTEREPLY→ Servidor responde à ENDVOTE;
-	CONSULTRESULT→ Cliente requisita ao servidor a contagem de votos;
-	CONSULTRESULTREPLY→ Servidor responde cliente com contagem de votos;
-	VOTE→ Cliente envia numero e nome do candidato a ser votado;
-	VOTEREPLY→ Servidor responde à operação VOTE;
+
+LOGIN → Cliente solicita autenticação com o servidor;
+LOGINREPLY→ Servidor responde LOGIN, alterando estado para Autenticado;
+ADMINLOGINREPLY→Caso o cliente entre com dados de administrador, o servidor altera seu estado para tal, ao invés de Autenticado;
+LOGOUT→ Cliente/Admin solicita logout do sistema para o servidor;
+LOGOUTREPLY → Servidor responde alterando estado para Conectado;
+ADDCANDIDATO→ admin requisita cadastro de candidato novo;
+ADDCANDIDATOREPLY→Servidor responde ao pedido de criação de candidato
+STARTVOTE→ admin requisita o começo da votação
+STARTVOTEREPLY→ Servidor responde a requisição startvote do admin
+LISTCANDIDATOS→ Cliente pede ao servidor para ver os candidatos existentes
+LISTCANDIDATOSREPLY→ Servidor envia a lista de candidatos;
+ENDVOTE→ Admin requisita o encerramento da votação;
+ENDVOTEREPLY→ Servidor responde à ENDVOTE;
+CONSULTRESULT→ Cliente requisita ao servidor a contagem de votos;
+CONSULTRESULTREPLY→ Servidor responde cliente com contagem de votos;
+VOTE→ Cliente envia numero e nome do candidato a ser votado;
+VOTEREPLY→ Servidor responde à operação VOTE;
 
 #### Lista de códigos:
-	OK→ Operação completada com sucesso;
-	ERROR→ Erro ao processar requisição;
-	PARAMNULL→ Falta de parâmetros válidos;
+
+OK→ Operação completada com sucesso
+ERROR→ Erro ao processar requisição
+PARAMNULL→ Falta de parâmetros válidos
+
 #### Tipos Possíveis: 
-	String
+
+String
 
 
 ####  OPERAÇÕES
@@ -107,14 +112,11 @@ python3 client.py
 | ---           | ---                           | ---       | 
 | CONECTADO     | LOGIN,                        | CONECTADO |
 |               | LOGOUT,                       |           |   
-|               | EXIT                          |           |               
-|               |                               |           |               
+|               | EXIT                          |           |
 |               | LOGINREPLY:ERROR              |           |                   
 |               | ADMINLOGINREPLY:ERROR         |           |               
-|               |                               |           |           
 |               | LOGINREPLY:PARAMNULL          |           |                   
 |               | ADMINLOGINREPLY:PARAMNULL     |           |               
-|               |                               |           |               
 |               | EXITREPLY:ERROR               |           |           
 |               | LOGINREPLY:OK                 | AUTH      |                   
 |               | ADMINLOGINREPLY:OK            | ADMIN     |                    
@@ -123,14 +125,11 @@ python3 client.py
 |               | VOTE                          |           |       
 |               | LISTCANDIDATOS                |           |           
 |               | CONSULTRESULT                 |           |               
-|               |                               |           |               
 |               | VOTEREPLY:OK                  |           |               
 |               | VOTEREPLY:ERROR               |           |               
 |               | VOTTEREPLY:PARAMNULL          |           |               
-|               |                               |           |               
 |               | LISTCANDIDATOSREPLY:OK        |           |               
 |               | LISTCANDIDATOSREPLY:ERROR     |           |               
-|               |                               |           |               
 |               | CONSULTRESULTREPLY:OK         |           |               
 |               | CONSULTRESULTREPLY:ERROR      |           |               
 |               | LOGOUTREPLY:OK                | CONECTADO |               
@@ -141,12 +140,10 @@ python3 client.py
 |               | STARTVOTEREPLY:OK             |           |                      
 |               | ENDVOTEREPLY:OK               |           |               
 |               | ADDCANDIDATOREPLY:OK          |           |               
-|               |                               |           |               
 |               | STARTVOTEREPLY:ERROR          |           |               
 |               | ENDVOTEREPLY:ERROR            |           |
 |               | ADDCANDIDATOREPLY:ERROR       |           |
 |               | LOGOUT:ERROR                  |           |
-|               |                               |           |
 |               | ADDCANDIDATOREPLY:PARAMNULL   |           |
 |               | LOGOUTREPLY:OK                | CONECTADO |
 
