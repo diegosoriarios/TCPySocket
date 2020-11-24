@@ -150,15 +150,14 @@ Protocolo de middleware de um sistema de votação. Cliente deve poder votar, co
 
 
 #### Exemplos de troca de mensagens:
-
-- LOGIN { nome = daniel, senha = pato}
-- → LOGINADMINREPLY:OK
-- → ADDCANDIDATO [ 
-- { nome = amaral, numero = 13, partido = ST},
-- { nome = Padre Luiz, numero = 666, partido = IVPB},
-- { nome = Antonio da padaria, numero = 26, partido= MB} 
-- ] 
-- → ADDCANDIDATOREPLY:OK
-- → STARTVOTE
-- → STARTVOTEREPLY:OK
+    LOGIN { nome = daniel, senha = pato}
+    → LOGINADMINREPLY:OK
+    → ADDCANDIDATO [ 
+    { nome = amaral, numero = 13, partido = ST},
+    { nome = Padre Luiz, numero = 666, partido = IVPB},
+    { nome = Antonio da padaria, numero = 26, partido= MB} 
+    ] 
+    → ADDCANDIDATOREPLY:OK
+    → STARTVOTE
+    → STARTVOTEREPLY:OK
 
