@@ -102,10 +102,10 @@ Protocolo de middleware de um sistema de votação. Cliente deve poder votar, co
 
 #### Tabela de estados e suas transições 
 
--CONECTADO → Estado inicial do cliente, sem auth;
--AUTH→ Estado que cliente está autenticado
--ADMIN→ Estado que cliente se autenticou com uma conta de admin
--EXIT→ Estado apenas para sair da aplicação
+- CONECTADO → Estado inicial do cliente, sem auth;
+- AUTH→ Estado que cliente está autenticado
+- ADMIN→ Estado que cliente se autenticou com uma conta de admin
+- EXIT→ Estado apenas para sair da aplicação
 
 
 
