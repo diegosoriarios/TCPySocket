@@ -18,33 +18,33 @@ Protocolo de middleware de um sistema de votação. Cliente deve poder votar, co
 
 #### Lista de mensagens possíveis:
 
-LOGIN → Cliente solicita autenticação com o servidor;
-LOGINREPLY→ Servidor responde LOGIN, alterando estado para Autenticado;
-ADMINLOGINREPLY→Caso o cliente entre com dados de administrador, o servidor altera seu estado para tal, ao invés de Autenticado;
-LOGOUT→ Cliente/Admin solicita logout do sistema para o servidor;
-LOGOUTREPLY → Servidor responde alterando estado para Conectado;
-ADDCANDIDATO→ admin requisita cadastro de candidato novo;
-ADDCANDIDATOREPLY→Servidor responde ao pedido de criação de candidato
-STARTVOTE→ admin requisita o começo da votação
-STARTVOTEREPLY→ Servidor responde a requisição startvote do admin
-LISTCANDIDATOS→ Cliente pede ao servidor para ver os candidatos existentes
-LISTCANDIDATOSREPLY→ Servidor envia a lista de candidatos;
-ENDVOTE→ Admin requisita o encerramento da votação;
-ENDVOTEREPLY→ Servidor responde à ENDVOTE;
-CONSULTRESULT→ Cliente requisita ao servidor a contagem de votos;
-CONSULTRESULTREPLY→ Servidor responde cliente com contagem de votos;
-VOTE→ Cliente envia numero e nome do candidato a ser votado;
-VOTEREPLY→ Servidor responde à operação VOTE;
+- LOGIN → Cliente solicita autenticação com o servidor;
+- LOGINREPLY→ Servidor responde LOGIN, alterando estado para Autenticado;
+- ADMINLOGINREPLY→Caso o cliente entre com dados de administrador, o servidor altera seu estado para tal, ao invés de Autenticado;
+- LOGOUT→ Cliente/Admin solicita logout do sistema para o servidor;
+- LOGOUTREPLY → Servidor responde alterando estado para Conectado;
+- ADDCANDIDATO→ admin requisita cadastro de candidato novo;
+- ADDCANDIDATOREPLY→Servidor responde ao pedido de criação de candidato
+- STARTVOTE→ admin requisita o começo da votação
+- STARTVOTEREPLY→ Servidor responde a requisição startvote do admin
+- LISTCANDIDATOS→ Cliente pede ao servidor para ver os candidatos existentes
+- LISTCANDIDATOSREPLY→ Servidor envia a lista de candidatos;
+- ENDVOTE→ Admin requisita o encerramento da votação;
+- ENDVOTEREPLY→ Servidor responde à ENDVOTE;
+- CONSULTRESULT→ Cliente requisita ao servidor a contagem de votos;
+- CONSULTRESULTREPLY→ Servidor responde cliente com contagem de votos;
+- VOTE→ Cliente envia numero e nome do candidato a ser votado;
+- VOTEREPLY→ Servidor responde à operação VOTE;
 
 #### Lista de códigos:
 
-OK→ Operação completada com sucesso
-ERROR→ Erro ao processar requisição
-PARAMNULL→ Falta de parâmetros válidos
+- OK→ Operação completada com sucesso
+- ERROR→ Erro ao processar requisição
+- PARAMNULL→ Falta de parâmetros válidos
 
 #### Tipos Possíveis: 
 
-String
+- String
 
 
 ####  OPERAÇÕES
@@ -101,10 +101,11 @@ String
 
 
 #### Tabela de estados e suas transições 
-    CONECTADO → Estado inicial do cliente, sem auth;
-	AUTH→ Estado que cliente está autenticado
-	ADMIN→ Estado que cliente se autenticou com uma conta de admin
-	EXIT→ Estado apenas para sair da aplicação
+
+-CONECTADO → Estado inicial do cliente, sem auth;
+-AUTH→ Estado que cliente está autenticado
+-ADMIN→ Estado que cliente se autenticou com uma conta de admin
+-EXIT→ Estado apenas para sair da aplicação
 
 
 
@@ -150,14 +151,14 @@ String
 
 #### Exemplos de troca de mensagens:
 
-LOGIN { nome = daniel, senha = pato}
-→ LOGINADMINREPLY:OK
-→ ADDCANDIDATO [ 
-{ nome = amaral, numero = 13, partido = ST},
-{ nome = Padre Luiz, numero = 666, partido = IVPB},
-{ nome = Antonio da padaria, numero = 26, partido= MB} 
-] 
-→ ADDCANDIDATOREPLY:OK
-→ STARTVOTE
-→ STARTVOTEREPLY:OK
+- LOGIN { nome = daniel, senha = pato}
+- → LOGINADMINREPLY:OK
+- → ADDCANDIDATO [ 
+- { nome = amaral, numero = 13, partido = ST},
+- { nome = Padre Luiz, numero = 666, partido = IVPB},
+- { nome = Antonio da padaria, numero = 26, partido= MB} 
+- ] 
+- → ADDCANDIDATOREPLY:OK
+- → STARTVOTE
+- → STARTVOTEREPLY:OK
 
