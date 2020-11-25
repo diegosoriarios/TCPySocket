@@ -2,7 +2,8 @@ import socket
 import json
 import random
 import os
-from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST, STATE
+from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST
+from utils import STATE, MESSAGES, STATUS
 
 HOST = ''
 PORT = 5000
@@ -17,10 +18,29 @@ db = [
     ["Green day", "Holiday"],
 ]
 
+class Candidatos:
+    def __init__(self, nome, numero, partido):
+        self.nome = nome
+        self.numero = numero
+        self.partido = partido
+    
+    def vote(self):
+        self.numero = self.numero + 1
+
+candidatos = [
+    Candidatos('Diego', 2, 'Lazy'),
+    Candidatos('Daniel', 1, 'Study')
+]
+
+votacao = {
+    "candidatos": candidatos,
+    "status": True,
+}
+
 users = [
-    ['elder', '123456'],
-    ['diego', 'senha'],
-    ['teste', 'teste'],
+    ['elder', '123456', False],
+    ['diego', 'senha', False],
+    ['teste', 'teste', False],
 ]
 
 SEARCH_NAME = 'search_name'
@@ -49,70 +69,93 @@ while True:
             print(cliente, operation)
 
             if state == STATE.CONNECTED:
-                if operation == LOGIN:
+                if operation == MESSAGES.LOGIN:
                     token = ""
-                    username = request[LOGIN][0]
-                    password = request[LOGIN][1]
+                    client = request['client']
+                    password = request['password']
+                    flag = False
                     for user in users:
                         if username.lower() in user[0]:
                             if password.lower() in user[1]:
-                                token = "token"
-                                state = STATE.AUTHENTICATED
-                    data = {"status": 202, "message": token, "operation": LOGIN+"_reply"}
-                    request = json.dumps(data)
-                    con.sendall(bytes(request, encoding='utf-8'))
+                                flag = True
+                                if user[2]:
+                                    state = STATE.ADMIN
+                                    data = {"operation": MESSAGES.ADMINLOGINREPLY, response: "Bem vindo #{client}", status: STATUS.OK}
+                                    request = json.dumps(data)
+                                    con.sendall(bytes(request, encoding='utf-8'))
+                                else:
+                                    state = STATE.AUTHENTICATED
+                                    data = {"operation": MESSAGES.LOGINREPLY, response: "Bem vindo #{client}", status: STATUS.OK}
+                                    request = json.dumps(data)
+                                    con.sendall(bytes(request, encoding='utf-8'))
+                    if flag:
+                        data = {"operation": MESSAGES.LOGINREPLY, response: "Client ou Senha não encontrados", status: STATUS.ERROR}
+                        request = json.dumps(data)
+                        con.sendall(bytes(request, encoding='utf-8'))
                 else:
-                    data = {"status": 401, "message": "Unauthorized", "operation": "Error_reply"}
+                    data = {"operation": MESSAGES.LOGINREPLY, response: "É preciso estar logado", status: STATUS.ERROR}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
-            elif state == STATE.AUTHENTICATED and request['token']:
-                if operation == LIST:
-                    data = {"status": 200, "message": db, "operation": LIST+"_reply"}
-                    request = json.dumps(data)
-                    con.sendall(bytes(request, encoding='utf-8'))
-                elif operation == SEARCH_NAME:
-                    return_value = []
-                    search = request[SEARCH_NAME]
-                    for name in db:
-                        if search.lower() in name[0].lower():
-                            return_value.append(name)
-                    
-                    data = {"status": 200, "message": return_value, "operation": SEARCH_NAME+"_reply"}
-                    request = json.dumps(data)
-                    con.sendall(bytes(request, encoding='utf-8'))
-                elif operation == SEARCH_CONTENT:
-                    return_value = []
-                    search = request[SEARCH_CONTENT]
-                    for name in db:
-                        if search.lower() in name[1].lower():
-                            return_value.append(name)
-                    
-                    data = {"status": 200, "message": return_value, "operation": SEARCH_CONTENT+"_reply"}
-                    request = json.dumps(data)
-                    con.sendall(bytes(request, encoding='utf-8'))
-                elif operation == UPLOAD:
-                    file = request[UPLOAD]
-                    db.append(file)
-                    data = {"status": 200, "message": "File Uploaded", "operation": UPLOAD+"_reply"}
-                    request = json.dumps(data)
-                    con.sendall(bytes(request, encoding='utf-8'))
-                elif operation == DOWNLOAD:
-                    file_name = request[DOWNLOAD][0]
-                    file_content = request[DOWNLOAD][1]
-                    
-                    for name in db:
-                        if file_name.lower() in name[0].lower():
-                            if file_content.lower() in name[1].lower():
-                                data = {"status": 200, "message": name, "operation": DOWNLOAD+"_reply"}
-                                request = json.dumps(data)
-                                con.sendall(bytes(request, encoding='utf-8'))
-                elif operation == LOGOUT:
+            elif state == STATE.AUTHENTICATED:
+                if operation == MESSAGES.LOGOUT:
                     state = STATE.CONNECTED
-                    data = {"status": 202, "message": "", "operation": LOGOUT+"_reply"}
+                    data = {"operation": MESSAGES.LOGOUTREPLY, response: "Volte sempre", status: STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
-                else:
-                    data = {"status": 401, "message": "Unauthorized", "operation": "Error_reply"}
+                elif operation == MESSAGES.VOTE:
+                    numero = request['vote']
+                    flag = False
+                    for candidato in votacao['candidatos']:
+                        if candidato.numero == numero:
+                            flag = True
+                            candidato.vote()
+                    if flag:
+                        data = {"operation": MESSAGES.VOTEREPLY, response: "Voto computado, muito obrigado", status: STATUS.OK}
+                        request = json.dumps(data)
+                        con.sendall(bytes(request, encoding='utf-8'))
+                    else:
+                        data = {"operation": MESSAGES.VOTEREPLY, response: "Candidato não encontrado", status: STATUS.ERROR}
+                        request = json.dumps(data)
+                        con.sendall(bytes(request, encoding='utf-8'))
+                elif operation == MESSAGES.LISTCANDIDATOS:
+                    list_candidatos = []
+                    for candidato in votacao['candidatos']:
+                        list_item = [candidato.nome, candidato.numero]
+                        list_candidatos.append(list_item)
+                    data = {"operation": MESSAGES.LISTCANDIDATOSREPLY, response: list_candidatos, status: STATUS.OK}
+                    request = json.dumps(data)
+                    con.sendall(bytes(request, encoding='utf-8'))
+                elif operation == MESSAGES.CONSULTRESULT:
+                    if votacao['status']:
+                        data = {"operation": MESSAGES.CONSULTRESULTREPLY, response: "A votação está em andamento", status: STATUS.ERROR}
+                        request = json.dumps(data)
+                        con.sendall(bytes(request, encoding='utf-8'))
+                    else:
+                        data = {"operation": MESSAGES.CONSULTRESULTREPLY, response: votacao['candidatos'], status: STATUS.OK}
+                        request = json.dumps(data)
+                        con.sendall(bytes(request, encoding='utf-8'))
+            elif state == STATE.ADMIN:
+                if operation == MESSAGES.ADDCANDIDATO:
+                    nome = request['nome']
+                    numero = request['numero']
+                    partido = request['partido']
+                    novo_candidato = Candidatos(nome, numero, partido)
+                    votacao['candidatos'].append(novo_candidato)
+                    data = {"operation": MESSAGES.ADDCANDIDATOREPLY, response: "Candidato adicionado", status: STATUS.OK}
+                    request = json.dumps(data)
+                    con.sendall(bytes(request, encoding='utf-8'))
+                elif operation == MESSAGES.STARTVOTE:
+                    votacao['status'] = True
+                    data = {"operation": MESSAGES.STARTVOTEREPLY, response: "Votação Iniciada", status: STATUS.OK}
+                    request = json.dumps(data)
+                    con.sendall(bytes(request, encoding='utf-8'))
+                elif operation == MESSAGES.ENDVOTE:
+                    votacao['status'] = False
+                    data = {"operation": MESSAGES.ENDVOTEREPLY, response: "Votação encerrada", status: STATUS.OK}
+                    request = json.dumps(data)
+                    con.sendall(bytes(request, encoding='utf-8'))
+                elif operation == MESSAGES.LOGOUT:
+                    data = {"operation": MESSAGES.LOGOUTREPLY, response: "Volte Sempre", status: STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
             else:

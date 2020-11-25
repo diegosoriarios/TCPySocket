@@ -2,6 +2,7 @@ import socket
 import json
 import sys
 from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST
+from utils import MESSAGES, STATUS, STATE
 
 token = ''
 
@@ -35,35 +36,34 @@ msg = input()
 while msg != '\x18':
     error = False
     if msg == LOGIN:
-        username = input('Digite o username: ')
+        client = input('Digite o client: ')
         password = input('Digite o password: ')
-        data = {"status": 200, "message": msg, LOGIN: [username, password]}
+        data = {"client": client, "password": password, "operation": MESSAGES.LOGIN}
         send_message(data, tcp)
     elif msg == LOGOUT:
-        data = {"status": 200, "message": msg, "token": token}
+        data = {"operation": MESSAGES.LOGOUT}
         send_message(data, tcp)
-    elif msg == LIST:
-        data = {"status": 200, "message": msg, "token": token}
+    elif msg == 'start_vote':
+        data = {"operation": MESSAGES.STARTVOTE}
         send_message(data, tcp)
-    elif msg == SEARCH_NAME:
-        searcher = input("Qual arquivo buscar ")
-        data = {"status": 200, "message": msg, SEARCH_NAME: searcher, "token": token}
+    elif msg == 'add_candidato':
+        candidato = input("Qual o nome do candidato? ")
+        numero = input("Qual o numero do candidato? ")
+        partido= input("Qual o partido do candidato? ")
+        data = {"operation": MESSAGES.ADDCANDIDATO, "nome": candidato, "numero": numero, "partido": partido}
         send_message(data, tcp)
-    elif msg == SEARCH_CONTENT:
-        searcher = input("Qual conteudo buscar ")
-        data = {"status": 200, "message": msg, SEARCH_CONTENT: searcher, "token": token}
+    elif msg == 'list_candidatos':
+        data = {"operation": MESSAGES.LISTCANDIDATOS}
         send_message(data, tcp)
-    elif msg == UPLOAD:
-        file_name = input("Digite o nome do arquivo ")
-        file_content = input("Qual conteudo do arquivo ")
-        file = [file_name, file_content]
-        data = {"status": 200, "message": msg, UPLOAD: file, "token": token}
+    elif msg == 'end_vote':
+        data = {"operation": MESSAGES.ENDVOTE}
         send_message(data, tcp)
-    elif msg == DOWNLOAD:
-        file_name = input("Digite o nome do arquivo ")
-        file_content = input("Qual conteudo do arquivo ")
-        file = [file_name, file_content]
-        data = {"status": 200, "message": msg, DOWNLOAD: file, "token": token}
+    elif msg == 'consult_result':
+        data = {"operation": MESSAGES.CONSULTRESULT}
+        send_message(data, tcp)
+    elif msg == 'vote':
+        numero = input("Qual o numero? ")
+        data = {"operation": MESSAGES.VOTE, "numero": numero}
         send_message(data, tcp)
     else:
         error = True
