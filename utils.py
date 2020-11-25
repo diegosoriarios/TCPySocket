@@ -8,32 +8,35 @@ LOGIN = 'login'
 LOGOUT = 'logout'
 LIST = 'list'
 
-class STATE(Enum):
-    CONNECTED = 1
-    AUTHENTICATED = 2
-    ADMIN = 3
-    EXIT = 4
+class STATE:
+    def __init__(self):
+        self.CONNECTED = 'CONNECTED'
+        self.AUTHENTICATED = 'AUTHENTICATED'
+        self.ADMIN = 'ADMIN'
+        self.EXIT = 'EXIT'
 
-class STATUS(Enum):
-    OK = 1
-    ERROR = 2
-    PARAMNULL = 3
+class STATUS:
+    def __init__(self):
+        self.OK = 'OK'
+        self.ERROR = 'ERROR'
+        self.PARAMNULL = 'PARAMNULL'
 
-class MESSAGES(Enum):
-    LOGIN = 1
-    LOGINREPLY = 2
-    ADMINLOGINREPLY = 3
-    LOGOUT = 4
-    LOGOUTREPLY = 5 
-    ADDCANDIDATO = 6
-    ADDCANDIDATOREPLY = 7
-    STARTVOTE = 8
-    STARTVOTEREPLY = 9
-    LISTCANDIDATOS = 10
-    LISTCANDIDATOSREPLY = 11
-    ENDVOTE = 12
-    ENDVOTEREPLY = 13
-    CONSULTRESULT = 14
-    CONSULTRESULTREPLY = 15
-    VOTE = 16
-    VOTEREPLY = 17
+class MESSAGES:
+    def __init__(self):
+        self.LOGIN = 'LOGIN'
+        self.LOGINREPLY = 'LOGINREPLY'
+        self.ADMINLOGINREPLY = 'ADMINLOGINREPLY'
+        self.LOGOUT = 'LOGOUT'
+        self.LOGOUTREPLY = 'LOGOUTREPLY'
+        self.ADDCANDIDATO = 'ADDCANDIDATO'
+        self.ADDCANDIDATOREPLY = 'ADDCANDIDATOREPLY'
+        self.STARTVOTE = 'STARTVOTE'
+        self.STARTVOTEREPLY = 'STARTVOTEREPLY'
+        self.LISTCANDIDATOS = 'LISTCANDIDATOS'
+        self.LISTCANDIDATOSREPLY = 'LISTCANDIDATOSREPLY'
+        self.ENDVOTE = 'ENDVOTE'
+        self.ENDVOTEREPLY = 'ENDVOTEREPLY'
+        self.CONSULTRESULT = 'CONSULTRESULT'
+        self.CONSULTRESULTREPLY = 'CONSULTRESULTREPLY'
+        self.VOTE = 'VOTE'
+        self.VOTEREPLY = 'VOTEREPLY'

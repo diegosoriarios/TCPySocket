@@ -4,6 +4,9 @@ import random
 import os
 from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST
 from utils import STATE, MESSAGES, STATUS
+STATE = STATE()
+MESSAGES = MESSAGES()
+STATUS = STATUS()
 
 HOST = ''
 PORT = 5000
@@ -65,7 +68,7 @@ while True:
             if not msg: break
             # print(cliente, msg)
             request = json.loads(msg)
-            operation = request['message']
+            operation = request['operation']
             print(cliente, operation)
 
             if state == STATE.CONNECTED:
@@ -75,31 +78,31 @@ while True:
                     password = request['password']
                     flag = False
                     for user in users:
-                        if username.lower() in user[0]:
+                        if client.lower() in user[0]:
                             if password.lower() in user[1]:
                                 flag = True
                                 if user[2]:
                                     state = STATE.ADMIN
-                                    data = {"operation": MESSAGES.ADMINLOGINREPLY, response: "Bem vindo #{client}", status: STATUS.OK}
+                                    data = {"operation": MESSAGES.ADMINLOGINREPLY, "response": "Bem vindo " + client, "status": STATUS.OK}
                                     request = json.dumps(data)
                                     con.sendall(bytes(request, encoding='utf-8'))
                                 else:
                                     state = STATE.AUTHENTICATED
-                                    data = {"operation": MESSAGES.LOGINREPLY, response: "Bem vindo #{client}", status: STATUS.OK}
+                                    data = {"operation": MESSAGES.LOGINREPLY, "response": "Bem vindo " + client, "status": STATUS.OK}
                                     request = json.dumps(data)
                                     con.sendall(bytes(request, encoding='utf-8'))
                     if flag:
-                        data = {"operation": MESSAGES.LOGINREPLY, response: "Client ou Senha não encontrados", status: STATUS.ERROR}
+                        data = {"operation": MESSAGES.LOGINREPLY, "response": "Client ou Senha não encontrados", "status": STATUS.ERROR}
                         request = json.dumps(data)
                         con.sendall(bytes(request, encoding='utf-8'))
                 else:
-                    data = {"operation": MESSAGES.LOGINREPLY, response: "É preciso estar logado", status: STATUS.ERROR}
+                    data = {"operation": MESSAGES.LOGINREPLY, "response": "É preciso estar logado", "status": STATUS.ERROR}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
             elif state == STATE.AUTHENTICATED:
                 if operation == MESSAGES.LOGOUT:
                     state = STATE.CONNECTED
-                    data = {"operation": MESSAGES.LOGOUTREPLY, response: "Volte sempre", status: STATUS.OK}
+                    data = {"operation": MESSAGES.LOGOUTREPLY, "response": "Volte sempre", "status": STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == MESSAGES.VOTE:
@@ -110,11 +113,11 @@ while True:
                             flag = True
                             candidato.vote()
                     if flag:
-                        data = {"operation": MESSAGES.VOTEREPLY, response: "Voto computado, muito obrigado", status: STATUS.OK}
+                        data = {"operation": MESSAGES.VOTEREPLY, "response": "Voto computado, muito obrigado", "status": STATUS.OK}
                         request = json.dumps(data)
                         con.sendall(bytes(request, encoding='utf-8'))
                     else:
-                        data = {"operation": MESSAGES.VOTEREPLY, response: "Candidato não encontrado", status: STATUS.ERROR}
+                        data = {"operation": MESSAGES.VOTEREPLY, "response": "Candidato não encontrado", "status": STATUS.ERROR}
                         request = json.dumps(data)
                         con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == MESSAGES.LISTCANDIDATOS:
@@ -122,16 +125,16 @@ while True:
                     for candidato in votacao['candidatos']:
                         list_item = [candidato.nome, candidato.numero]
                         list_candidatos.append(list_item)
-                    data = {"operation": MESSAGES.LISTCANDIDATOSREPLY, response: list_candidatos, status: STATUS.OK}
+                    data = {"operation": MESSAGES.LISTCANDIDATOSREPLY, "response": list_candidatos, "status": STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == MESSAGES.CONSULTRESULT:
                     if votacao['status']:
-                        data = {"operation": MESSAGES.CONSULTRESULTREPLY, response: "A votação está em andamento", status: STATUS.ERROR}
+                        data = {"operation": MESSAGES.CONSULTRESULTREPLY, "response": "A votação está em andamento", "status": STATUS.ERROR}
                         request = json.dumps(data)
                         con.sendall(bytes(request, encoding='utf-8'))
                     else:
-                        data = {"operation": MESSAGES.CONSULTRESULTREPLY, response: votacao['candidatos'], status: STATUS.OK}
+                        data = {"operation": MESSAGES.CONSULTRESULTREPLY, "response": votacao['candidatos'], "status": STATUS.OK}
                         request = json.dumps(data)
                         con.sendall(bytes(request, encoding='utf-8'))
             elif state == STATE.ADMIN:
@@ -141,21 +144,21 @@ while True:
                     partido = request['partido']
                     novo_candidato = Candidatos(nome, numero, partido)
                     votacao['candidatos'].append(novo_candidato)
-                    data = {"operation": MESSAGES.ADDCANDIDATOREPLY, response: "Candidato adicionado", status: STATUS.OK}
+                    data = {"operation": MESSAGES.ADDCANDIDATOREPLY, "response": "Candidato adicionado", "status": STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == MESSAGES.STARTVOTE:
                     votacao['status'] = True
-                    data = {"operation": MESSAGES.STARTVOTEREPLY, response: "Votação Iniciada", status: STATUS.OK}
+                    data = {"operation": MESSAGES.STARTVOTEREPLY, "response": "Votação Iniciada", "status": STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == MESSAGES.ENDVOTE:
                     votacao['status'] = False
-                    data = {"operation": MESSAGES.ENDVOTEREPLY, response: "Votação encerrada", status: STATUS.OK}
+                    data = {"operation": MESSAGES.ENDVOTEREPLY, "response": "Votação encerrada", "status": STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
                 elif operation == MESSAGES.LOGOUT:
-                    data = {"operation": MESSAGES.LOGOUTREPLY, response: "Volte Sempre", status: STATUS.OK}
+                    data = {"operation": MESSAGES.LOGOUTREPLY, "response": "Volte Sempre", "status": STATUS.OK}
                     request = json.dumps(data)
                     con.sendall(bytes(request, encoding='utf-8'))
             else:

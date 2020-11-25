@@ -4,19 +4,27 @@ import sys
 from utils import SEARCH_NAME, SEARCH_CONTENT, DOWNLOAD, UPLOAD, LOGIN, LOGOUT, LIST
 from utils import MESSAGES, STATUS, STATE
 
-token = ''
+MESSAGES = MESSAGES()
+STATUS = STATUS()
+STATE = STATE()
+
+state = STATE.CONNECTED
 
 def send_message(data, tcp):
     request = json.dumps(data)
     tcp.sendall(bytes(request, encoding='utf-8'))
 
 def print_options():
-    if token:
-        print('-------------------------------')
-        print('| logout             list     |')
-        print('| search_name        upload   |')
-        print('| search_content     download |')
-        print('-------------------------------')
+    if state == STATE.AUTHENTICATED:
+        print('--------------------------------------')
+        print('| logout              vote           |')
+        print('| list_candidatos     consult_result |')
+        print('--------------------------------------')
+    elif state == STATE.ADMIN:
+        print('---------------------------------')
+        print('| add_candidato      start_vote |')
+        print('| end_vote           logout     |')
+        print('---------------------------------')
     else:
         print('-------------------------------')
         print('|                             |')
@@ -35,6 +43,7 @@ print_options()
 msg = input()
 while msg != '\x18':
     error = False
+    print(msg)
     if msg == LOGIN:
         client = input('Digite o client: ')
         password = input('Digite o password: ')
@@ -74,12 +83,56 @@ while msg != '\x18':
         msg = tcp.recv(1024)
         # print(cliente, msg)
         request = json.loads(msg)
-        status = request['status']
         operation = request['operation']
-        response = request['message']
-        if status == 202:
-            token = request['message']
-        print(operation, response)
+        if operation == MESSAGES.LOGINREPLY:
+            status = request['status']
+            if status == STATUS.OK:
+                state = STATE.AUTHENTICATED
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.ADMINLOGINREPLY:
+            status = request['status']
+            if status == STATUS.OK:
+                state = STATE.ADMIN
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.LOGOUTREPLY:
+            status = request['status']
+            if status == STATUS.OK:
+                state = STATE.EXIT
+            state = STATE.EXIT
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.STARTVOTEREPLY:
+            state = STATE.AUTHENTICATED
+            status = request['status']
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.ADDCANDIDATOREPLY:
+            state = STATE.AUTHENTICATED
+            status = request['status']
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.LISTCANDIDATOSREPLY:
+            state = STATE.AUTHENTICATED
+            status = request['status']
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.ENDVOTEREPLY:
+            state = STATE.AUTHENTICATED
+            status = request['status']
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.CONSULTRESULTREPLY:
+            state = STATE.AUTHENTICATED
+            status = request['status']
+            response = request['response']
+            print(operation, response)
+        elif operation == MESSAGES.VOTEREPLY:
+            state = STATE.AUTHENTICATED
+            status = request['status']
+            response = request['response']
+            print(operation, response)
     print_options()
     msg = input()
 tcp.close()
